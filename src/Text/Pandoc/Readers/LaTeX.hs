@@ -1174,19 +1174,12 @@ inlineCommands = M.fromList $
   , ("ref", ref "ref")
   , ("textgreek", tok)
   , ("sep", lit ",")
-<<<<<<< HEAD
-  , ("cref", rawInlineOr "cref" (inBrackets <$> tok))  -- from cleveref.sty
+  , ("cref", ref "ref")       -- from cleveref.sty
+  , ("vref", ref "ref+page")  -- from varioref.sty
+  , ("eqref", ref "eqref")   -- from amsmath.sty
   , ("(", mathInline . toksToString <$> manyTill anyTok (controlSeq ")"))
   , ("[", mathDisplay . toksToString <$> manyTill anyTok (controlSeq "]"))
   , ("ensuremath", mathInline . toksToString <$> braced)
-=======
-  , ("cref", rawInlineOr "cref" $ ref "ref")       -- from cleveref.sty
-  , ("vref", rawInlineOr "vref" $ ref "ref+page")  -- from varioref.sty
-  , ("eqref", rawInlineOr "eqref" $ ref "eqref")   -- from amsmath.sty
-  , ("(", mathInline $ manyTill anyChar (try $ string "\\)"))
-  , ("[", mathDisplay $ manyTill anyChar (try $ string "\\]"))
-  , ("ensuremath", mathInline braced)
->>>>>>> origin/ref-command-enhancement
   , ("texorpdfstring", (\_ x -> x) <$> tok <*> tok)
   , ("P", lit "¶")
   , ("S", lit "§")
@@ -1456,19 +1449,14 @@ treatAsInline = Set.fromList
   , "pagebreak"
   ]
 
-<<<<<<< HEAD
 lookupListDefault :: (Show k, Ord k) => v -> [k] -> M.Map k v -> v
 lookupListDefault d = (fromMaybe d .) . lookupList
   where lookupList l m = msum $ map (`M.lookup` m) l
-=======
+
 ref :: PandocMonad m => String -> LP m Inlines
 ref cls = do
   label <- braced
-  return $ spanWith ("",[],[("data-reference-type", cls), ("data-reference", label)]) $ inBrackets $ str label
-
-ttfamily :: PandocMonad m => LP m Inlines
-ttfamily = (code . stringify . toList) <$> tok
->>>>>>> origin/ref-command-enhancement
+  return $ spanWith ("",[],[("data-reference-type", cls), ("data-reference", toksToString label)]) $ inBrackets $ str $ toksToString label
 
 inline :: PandocMonad m => LP m Inlines
 inline = (mempty <$ comment)
@@ -2216,4 +2204,3 @@ block = (mempty <$ spaces1)
 
 blocks :: PandocMonad m => LP m Blocks
 blocks = mconcat <$> many block
-
