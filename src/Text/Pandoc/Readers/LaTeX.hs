@@ -600,6 +600,11 @@ dosiunitx = do
                       emptyOr160 unit,
                       unit]
 
+dosinum :: PandocMonad m => LP m Inlines
+dosinum = do
+  skipopts
+  tok
+
 lit :: String -> LP m Inlines
 lit = pure . str
 
@@ -1339,6 +1344,7 @@ inlineCommands = M.fromList $
   , ("acsp", doAcronymPlural "abbrv")
   -- siuntix
   , ("SI", dosiunitx)
+  , ("num", dosinum)
   -- hyphenat
   , ("bshyp", lit "\\\173")
   , ("fshyp", lit "/\173")
